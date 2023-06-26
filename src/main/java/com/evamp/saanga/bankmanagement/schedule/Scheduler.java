@@ -17,7 +17,7 @@ public class Scheduler {
     @Autowired
     UserService userService;
 
-    @Scheduled(cron = "0 * 16 * * ?")
+    @Scheduled(cron = "0 * 14 * * ?")
     public void scheduleTask() throws IOException, MessagingException {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat();

@@ -5,21 +5,12 @@ import com.evamp.saanga.bankmanagement.model.User;
 import com.evamp.saanga.bankmanagement.repository.TransactionRepo;
 import com.evamp.saanga.bankmanagement.repository.UserRepo;
 import com.evamp.saanga.bankmanagement.requestresponse.EmailResponse;
-import com.evamp.saanga.bankmanagement.requestresponse.ExcelReportResponse;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,8 +36,6 @@ public class UserService {
     @Autowired
     EmailResponse emailResponse;
 
-    @Autowired
-    ExcelReportResponse excelReportResponse;
 
     public long calculateTransactionAverage(List<Transaction> transactions){
         long totalAmount = transactions.stream().mapToInt(val -> val.getAmount()).sum();
