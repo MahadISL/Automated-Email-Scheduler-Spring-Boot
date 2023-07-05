@@ -1,10 +1,13 @@
 package com.evamp.saanga.bankmanagement.model;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Transaction")
+@Component
 public class Transaction {
 
     @Id
@@ -28,6 +31,10 @@ public class Transaction {
         return obj;
     }
 
+    public void setObj(User obj) {
+        this.obj = obj;
+    }
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sender_account_no#")
     User obj;
@@ -38,7 +45,6 @@ public class Transaction {
     }
 
     public Transaction(int id, LocalDateTime dateAndTime, Integer amount, Integer transactionReferenceNumber, Integer receiverAccountNo, User obj) {
-        this.id = id;
         this.dateAndTime = dateAndTime;
         this.amount = amount;
         this.transactionReferenceNumber = transactionReferenceNumber;
