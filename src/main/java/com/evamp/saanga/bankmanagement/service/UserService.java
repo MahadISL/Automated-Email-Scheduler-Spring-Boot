@@ -1,10 +1,12 @@
 package com.evamp.saanga.bankmanagement.service;
 
+import com.evamp.saanga.bankmanagement.exception.CustomException;
 import com.evamp.saanga.bankmanagement.model.Transaction;
 import com.evamp.saanga.bankmanagement.model.User;
 import com.evamp.saanga.bankmanagement.repository.TransactionRepo;
 import com.evamp.saanga.bankmanagement.repository.UserRepo;
 import com.evamp.saanga.bankmanagement.requestresponse.EmailResponse;
+import com.evamp.saanga.bankmanagement.requestresponse.SendMoneyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class UserService {
 
     @Autowired
     ExcelService excelService;
+
 
     @Autowired
     UserRepo userRepo;
@@ -86,9 +89,37 @@ public class UserService {
 //            emailService.sendEmail(email,"Automated Email to User", emailResponse.toString());
             emailService.sendAttachmentEmail(email, email, "Automated Email to User",emailResponse.toString(),file);
         }
+
     }
 
+    public Boolean calculateBalance(User user, SendMoneyRequest request){
 
+        // sender balance (user)
+        Double currentBalance = user.getBalance();
+
+        Integer amountTransferred = request.getAmount();
+
+        // receiver balance
+        User user1 = userRepo.findByAccountNo(request.getReceiverAccountNo());
+        Double currentBalance1 = user1.getBalance();
+
+        if (currentBalance >= amountTransferred){
+            // Calculating and updating new balance in user account
+            currentBalance = currentBalance - amountTransferred;
+            user.setBalance(currentBalance);
+            userRepo.save(user);
+
+            // Calculating and updating new balance in receiver account
+            currentBalance1 = currentBalance1 + amountTransferred;
+            user1.setBalance(currentBalance1);
+            userRepo.save(user1);
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 
 

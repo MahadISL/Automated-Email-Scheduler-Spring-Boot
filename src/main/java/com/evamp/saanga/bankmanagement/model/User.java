@@ -64,14 +64,13 @@ public class User implements UserDetails{
 
 
     public User(int id, String firstName, String lastName, String email,
-                String cnic, Double balance, Set<Role> roles) {
+                String cnic, Double balance) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.cnic = cnic;
         this.balance = balance;
-        this.roles = roles;
     }
 
     public User() {

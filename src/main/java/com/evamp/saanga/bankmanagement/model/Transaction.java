@@ -1,5 +1,6 @@
 package com.evamp.saanga.bankmanagement.model;
 
+import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -13,9 +14,9 @@ public class Transaction {
     @Id
     @Column(name = "transaction_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @Column(name = "date_and_time")
+    @Column(unique = true, name = "date_and_time")
     private LocalDateTime dateAndTime;
 
     @Column(name = "amount")
@@ -52,11 +53,11 @@ public class Transaction {
         this.obj = obj;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

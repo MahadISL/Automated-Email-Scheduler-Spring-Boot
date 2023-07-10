@@ -6,6 +6,8 @@ import com.evamp.saanga.bankmanagement.model.Role;
 import com.evamp.saanga.bankmanagement.model.User;
 import com.evamp.saanga.bankmanagement.repository.RoleRepo;
 import com.evamp.saanga.bankmanagement.repository.UserRepo;
+import com.evamp.saanga.bankmanagement.requestresponse.AccountNoRequest;
+import com.evamp.saanga.bankmanagement.requestresponse.AccountNoResponse;
 import com.evamp.saanga.bankmanagement.requestresponse.CreateAccountRequest;
 import com.evamp.saanga.bankmanagement.requestresponse.CreateAccountResponse;
 import org.slf4j.Logger;
@@ -14,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +32,9 @@ public class AdminController {
 
     @Autowired
     User user;
+
+    @Autowired
+    AccountNoResponse accountNoResponse;
 
     @Autowired
     UserRepo userRepo;
@@ -103,5 +105,25 @@ public class AdminController {
         log.info("SET RESPONSE OBJECT VALUES USING SAVED  OBJECT");
 
         return new ResponseEntity<>(createAccountResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/accountno")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<AccountNoResponse> fetchAccountNo(@RequestBody AccountNoRequest cnic){
+
+        log.info("INSIDE FETCH ACCOUNT NO CONTROLLER");
+
+        log.info("FINDING SAVED USER...");
+        User savedUser = userRepo.findByCnic(cnic.getCnic()).orElseThrow(
+                () -> new CustomException("NO CUSTOMER PRESENT WITH CNIC = " + cnic.getCnic())
+        );
+
+
+        accountNoResponse.setAccountNo(savedUser.getaccountNo());
+        accountNoResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+        accountNoResponse.setResponseBody("ACCOUNT NUMBER SUCCESSFULLY FETCHED!");
+        log.info("SET RESPONSE OBJECT VALUES USING SAVED  OBJECT");
+
+        return new ResponseEntity<>(accountNoResponse, HttpStatus.OK);
     }
 }

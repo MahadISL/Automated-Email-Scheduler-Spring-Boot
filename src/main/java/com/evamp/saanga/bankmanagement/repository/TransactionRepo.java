@@ -8,6 +8,7 @@ import java.util.List;
 public interface TransactionRepo extends CrudRepository<Transaction, Integer > {
 
     List<Transaction> findAllByObjAccountNoIn(Iterable<Integer> userid);
+
     List<Transaction> findAll();
     List<Transaction> findAllByTransactionReferenceNumber(Integer trn);
 //     findObjAccountNoByTransactionReferenceNumber(Integer trn);

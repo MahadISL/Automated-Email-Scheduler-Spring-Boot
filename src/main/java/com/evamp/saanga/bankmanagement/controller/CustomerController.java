@@ -7,6 +7,7 @@ import com.evamp.saanga.bankmanagement.repository.TransactionRepo;
 import com.evamp.saanga.bankmanagement.repository.UserRepo;
 import com.evamp.saanga.bankmanagement.requestresponse.*;
 import com.evamp.saanga.bankmanagement.service.AuthenticationService;
+import com.evamp.saanga.bankmanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @RestController
 @RequestMapping("bank")
@@ -39,8 +41,6 @@ public class CustomerController {
     @Autowired
     AuthenticationService authenticationService;
 
-    @Autowired
-    AccountNoResponse accountNoResponse;
 
     @Autowired
     CheckBalanceResponse checkBalanceResponse;
@@ -51,25 +51,9 @@ public class CustomerController {
     @Autowired
     UserRepo userRepo;
 
-    @GetMapping("/accountno")
-    @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<AccountNoResponse> fetchAccountNo(@RequestBody AccountNoRequest cnic){
+    @Autowired
+    UserService userService;
 
-        log.info("INSIDE FETCH ACCOUNT NO CONTROLLER");
-
-        log.info("FINDING SAVED USER...");
-        User savedUser = userRepo.findByCnic(cnic.getCnic()).orElseThrow(
-                () -> new CustomException("NO CUSTOMER PRESENT WITH CNIC = " + cnic.getCnic())
-        );
-
-
-        accountNoResponse.setAccountNo(savedUser.getaccountNo());
-        accountNoResponse.setResponseCode(String.valueOf(HttpStatus.OK));
-        accountNoResponse.setResponseBody("ACCOUNT NUMBER SUCCESSFULLY FETCHED!");
-        log.info("SET RESPONSE OBJECT VALUES USING SAVED  OBJECT");
-
-        return new ResponseEntity<>(accountNoResponse, HttpStatus.OK);
-    }
 
     @GetMapping("/checkbalance")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -96,19 +80,43 @@ public class CustomerController {
     @PostMapping("/sendmoney")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     ResponseEntity<SendMoneyResponse> sendMoney(@RequestBody SendMoneyRequest request){
+
+        log.info("INSIDE CHECK BALANCE CONTROLLER ");
+
+
+        log.info("FINDING SAVED USER...");
         User user = userRepo.findByAccountNo(request.getSenderAccountNo());
         System.out.println(user);
-        transaction.setAmount(request.getAmount());
-        transaction.setDateAndTime(LocalDateTime.now());
-        transaction.setTransactionReferenceNumber(123);
-        transaction.setReceiverAccountNo(request.getReceiverAccountNo());
-        transaction.setObj(user);
 
-        transactionRepo.save(transaction);
+        Boolean transactionPossible = userService.calculateBalance(user, request);
+
+        if (transactionPossible) {
+
+            Random random = new Random();
+            // initializing
+            int trn = 100000 + random.nextInt(900000);
+            Integer id = random.nextInt(900000);
+
+            transaction.setId(id);
+            transaction.setAmount(request.getAmount());
+            transaction.setDateAndTime(LocalDateTime.now());
+            transaction.setTransactionReferenceNumber(trn);
+            transaction.setReceiverAccountNo(request.getReceiverAccountNo());
+            transaction.setObj(user);
+            log.info("SAVING TRANSACTION...");
+            transactionRepo.save(transaction);
+
+        }
+        else {
+            System.out.println("Transaction not possible! NOT ENOUGH FUNDS");
+        }
+
 
         sendMoneyResponse.setAmount(request.getAmount());
         sendMoneyResponse.setResponseCode(String.valueOf(HttpStatus.OK));
         sendMoneyResponse.setResponseBody("MONEY TRANSFERED SUCCESSFULLY!");
+        log.info("SET RESPONSE OBJECT VALUES USING SAVED OBJECT");
+
         return new ResponseEntity<SendMoneyResponse>(sendMoneyResponse, HttpStatus.OK);
 
     }
