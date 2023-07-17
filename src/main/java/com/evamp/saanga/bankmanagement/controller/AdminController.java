@@ -43,7 +43,7 @@ public class AdminController {
     RoleRepo roleRepo;
 
     @PostMapping("/createaccount")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<CreateAccountResponse> createAccount(@RequestBody CreateAccountRequest accountInfo){
 
         log.info("INSIDE CREATE ACCOUNT CONTROLLER");

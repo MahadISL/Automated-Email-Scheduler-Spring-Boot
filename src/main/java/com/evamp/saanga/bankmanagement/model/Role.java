@@ -1,8 +1,12 @@
 package com.evamp.saanga.bankmanagement.model;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.*;
+import org.hibernate.annotations.Cache;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "roles")
 public class Role {
 

@@ -1,5 +1,7 @@
 package com.evamp.saanga.bankmanagement.model;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
 
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Transaction")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Component
 public class Transaction {
 

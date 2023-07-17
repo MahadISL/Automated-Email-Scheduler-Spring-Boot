@@ -1,6 +1,8 @@
 package com.evamp.saanga.bankmanagement.model;
 
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,11 +17,12 @@ import java.util.stream.Collectors;
 
 @Component
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "User")
 public class User implements UserDetails{
 
     @Id
-    @SequenceGenerator(name = "seqGen", initialValue = 10001, allocationSize = 13)
+    @SequenceGenerator(name = "seqGen", initialValue = 10001, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqGen")
     @Column(name = "account_no#")
     private Integer accountNo;

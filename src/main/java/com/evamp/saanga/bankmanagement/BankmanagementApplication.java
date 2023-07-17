@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDateTime;
 @EnableScheduling
-@SpringBootApplication
+@SpringBootApplication(exclude = HazelcastAutoConfiguration.class)
 public class BankmanagementApplication implements CommandLineRunner {
 
 	@Autowired
@@ -28,6 +30,8 @@ public class BankmanagementApplication implements CommandLineRunner {
 	@Override
 	public void run(String[] args) throws Exception
 	{
+
+
 		// User and transactions
 
 //		User user = new User(1,"Mahad","Gul", "softdevelop8@gmail.com", 34582);
